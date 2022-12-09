@@ -22,7 +22,7 @@ class Post(BaseModel):
 # Fonction
 # async def root():
 def root(): # Pour indiquer à l'interpréteur que vous voulez créer une fonction , on utilise le mot clé def suivi d'un nom puis de parenthèses et ensuite d'un double point.
-    # Retourne un dictionnaire Python qui sera transformé en JSON.
+    # Retourne un dictionnaire Python qui sera transformé en JSON.<
     return {"message":"Bienvenue sur mon API"}
 
 # À chaque fois que le code est modifier il faudrat redémarrer le serveur (uvicorn).
