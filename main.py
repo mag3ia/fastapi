@@ -41,7 +41,8 @@ def post(new_post: Post):
     return{"data": "new_post"}
 
 # CRUD : Create (POST), Read (GET), Update (PUT/PATCH), DELETE
-# Update exemple: @app.get("/posts/{id}")
+# Read exemple: GET to /posts/:id (@app.put("/posts/{id}")). ":id" for specific post.
+# Update exemple: @app.put("/posts/{id}")
 # Always use plural standard convention:
 # ie.: POST request will be /posts
 
