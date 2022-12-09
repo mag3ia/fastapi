@@ -32,7 +32,7 @@ def root():
 def get_posts():
     return{"data":"Les données"}
 
-@app.post("/post")
+@app.post("/posts")
 def post(new_post: Post):
     print(new_post.published)
     # Each pydantic model has a method ".dict"
@@ -45,4 +45,3 @@ def post(new_post: Post):
 # Update exemple: @app.put("/posts/{id}")
 # Always use plural standard convention:
 # ie.: POST request will be /posts
-
