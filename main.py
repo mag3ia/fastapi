@@ -39,3 +39,9 @@ def post(new_post: Post):
     # So if I need to convert a pydantic model to dictionnary :
     # print(new_post.dict) # Retourne alors un dictionnaire des propriétés de ce model ("la requête").
     return{"data": "new_post"}
+
+# CRUD : Create (POST), Read (GET), Update (PUT/PATCH), DELETE
+# Update exemple: @app.get("/posts/{id}")
+# Always use plural standard convention:
+# ie.: POST request will be /posts
+
