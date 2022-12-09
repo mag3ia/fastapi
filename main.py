@@ -1,7 +1,18 @@
 from fastapi import FastAPI
 from fastapi.params import Body
+from pydantic import BaseModel
+from typing import Optional
 
 app = FastAPI()
+
+# Classe qui contruit le poste. 
+# N'autoriser qu'un seul type de données, des lignes de caractères (les int peuvent être transcrits en str)
+# Si aucune donnée n'est présente, retourne une erreur
+class Post(BaseModel):
+    title: str
+    content: str
+    published: bool = True # Si l'utilisateur ne publie pas, vrai par défaut
+    rating: Optional[int] = None
 
 # Path operation: "décorateur" qui fera fonctionner le code comme une API:
 # @app (décorateur) faisant referrence à "app" et appel la méthode HTTP GET.
@@ -22,6 +33,6 @@ def get_posts():
     return{"data":"Les données"}
 
 @app.post("/post")
-def post(payload: dict = Body(...)):
-    print(payload)
-    return{"new_post": f"title:{payload['title']} content: {payload['content']}"}
+def post(new_post: Post):
+    print(new_post.published)
+    return{"data": "new_post"}
