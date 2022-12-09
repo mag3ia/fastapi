@@ -12,7 +12,7 @@ class Post(BaseModel):
     title: str
     content: str
     published: bool = True # Si l'utilisateur ne publie pas, vrai par défaut
-    rating: Optional[int] = None
+    rating: Optional[int] = None # Si l'utilisateur met un string contenant un nombre, la string sera transformée en nombre
 
 # Path operation: "décorateur" qui fera fonctionner le code comme une API:
 # @app (décorateur) faisant referrence à "app" et appel la méthode HTTP GET.
@@ -35,4 +35,7 @@ def get_posts():
 @app.post("/post")
 def post(new_post: Post):
     print(new_post.published)
+    # Each pydantic model has a method ".dict"
+    # So if I need to convert a pydantic model to dictionnary :
+    # print(new_post.dict) # Retourne alors un dictionnaire des propriétés de ce model ("la requête").
     return{"data": "new_post"}
