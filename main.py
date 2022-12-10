@@ -37,8 +37,8 @@ def find_post(id):
             return p
 
 @app.get("/posts/{id}")
-def get_specific_post(id):
+def get_specific_post(id: int):
 
-    post = find_post(int(id))
+    post = find_post(id)
     print(post)
     return {"post_detail" : f"Voici le post {id}", "post_details" : post}
