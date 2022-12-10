@@ -30,3 +30,15 @@ def create_posts(post: Post):
     post_dict['id'] = randrange(0, 10000000)
     my_posts.append(post_dict)
     return{"data": post_dict}
+
+def find_post(id):
+    for p in my_posts:
+        if p['id'] == id:
+            return p
+
+@app.get("/posts/{id}")
+def get_specific_post(id):
+
+    post = find_post(int(id))
+    print(post)
+    return {"post_detail" : f"Voici le post {id}", "post_details" : post}
