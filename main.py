@@ -49,3 +49,14 @@ def get_specific_post(id: int, response: Response):
                             detail = f"Le post {id} n'a pas été trouvé.")
     return {"post_detail" : f"Voici le post {id}", "post_details" : post}
 
+def find_index_post(id):
+    for i, p in enumerate(my_posts):
+        if p['id'] == id:
+            return i
+
+@app.delete("/posts/{id}")
+def delete_post(id: int):
+    # trouver l'index dans le tableau qui a le bon ID
+    index = find_index_post(id)
+    my_posts.pop(index)
+    return {"message" : f"Le post {id} à bien été supprimé"}
