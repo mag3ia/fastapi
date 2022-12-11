@@ -22,7 +22,7 @@ class Post(BaseModel):
 #     rating: Optional[int] = None
 
 while True:
-        try:
+        try: # To-Do: vars!
             conn = psycopg2.connect(host='localhost', database='fastapi', user='postgres', password='2YuHHakD7fy6tK88aHm2jd7cuKZMFbjsEBYoYGZtMHtX8BPBsLedxEx3mxvANaNWM8zQdqvPjE7oXZzp37KwhRv7iAd3LNwEVjJj58A27GPHeBPvwyBjWfNQwNvygg79', cursor_factory=RealDictCursor) # Makes Python Dict.
             cursor = conn.cursor()
             print("Database connection was sucessful!")
@@ -34,8 +34,8 @@ while True:
 
 
 
-my_posts = [{"title": "titre post 1", "content": "contenu du post 1", "id": 1},
-            {"title": "Mes plats favoris", "content": "J'aime la pizza", "id": 2}]
+# my_posts = [{"title": "titre post 1", "content": "contenu du post 1", "id": 1},
+#             {"title": "Mes plats favoris", "content": "J'aime la pizza", "id": 2}]
 
 
 @app.get("/")
@@ -45,7 +45,10 @@ def root():
 
 @app.get("/posts")
 def get_posts():
-    return {"data": my_posts}
+    posts = cursor.execute(""" SELECT * FROM posts """)
+    posts = cursor.fetchall()
+    print(posts)
+    return {"data": posts}
 
 
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
