@@ -4,6 +4,10 @@ from pydantic import BaseModel
 from typing import Optional
 from random import randrange
 
+# Automatic documentation :
+# http://127.0.0.1:8000/docs/
+# http://127.0.0.1:8000/redoc/
+
 app = FastAPI()
 
 
