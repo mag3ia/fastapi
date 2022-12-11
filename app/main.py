@@ -45,7 +45,7 @@ def root():
 
 @app.get("/posts")
 def get_posts():
-    posts = cursor.execute(""" SELECT * FROM posts """)
+    posts = cursor.execute(""" SELECT * FROM posts; """)
     posts = cursor.fetchall()
     print(posts)
     return {"data": posts}
@@ -53,11 +53,17 @@ def get_posts():
 
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
 def create_posts(post: Post):
+    # Le code suivant n'est pas bon car vulnérable à la SQLInjection :
+    # cursor.execute(f" INSERT INTO posts (title, content, published) VALUES({post.title}, {post.content}, {post.published}")
+    # On utilisera la méthode suviante pour s'en prévenir:
+    cursor.execute(""" INSERT INTO posts (title, content, published) VALUES(%s, %s, %s); """, (post.title, post.content, post.published))
     post_dict = post.dict()
     post_dict['id'] = randrange(0, 10000000)
-    my_posts.append(post_dict)
-    return {"data": post_dict}
+    
+    # my_posts.append(post_dict)
+    # return {"data": post_dict}
 
+    return {"data" : "Post créé."}
 
 def find_post(id):
     for p in my_posts:
