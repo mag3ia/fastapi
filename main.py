@@ -41,6 +41,18 @@ def find_post(id):
         if p['id'] == id:
             return p
 
+@app.put("/post/{id}")
+def update_post(id: int, post: Post):
+    index = find_index_post(id)
+
+    if index == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
+                            detail=f"Le post avec l'id:{id} n'existe pas")
+
+    post_dict = post.dict()
+    post_dict['id'] = id
+    my_posts[index] = post_dict
+    return {'data' : post_dict}
 
 @app.get("/posts/latest")
 def get_latest_post():
@@ -76,17 +88,3 @@ def delete_post(id: int):
     # return {"message": f"Le post {id} à bien été supprimé"}
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
-@app.put("/post/{id}")
-def update_post(id: int, post: Post):
-    
-    index = find_index_post(id)
-
-    if index == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
-                            detail=f"Le post avec l'id:{id} n'existe pas")
-
-    post_dict = post.dict()
-    post_dict['id'] = id
-    my_posts[index] = post_dict
-
-    return {'data' : post_dict}
