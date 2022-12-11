@@ -1,6 +1,0 @@
-Fonctions natives
-L'interpréteur Python propose quelques fonctions et types natifs qui sont toujours disponibles. Ils sont listés ici par ordre alphabétique.
-https://docs.python.org/fr/3/library/functions.html
-
-
-Serialize
