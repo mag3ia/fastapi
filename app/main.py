@@ -21,6 +21,10 @@ class Post(BaseModel):
     published: bool = True
 #     rating: Optional[int] = None
 
+@app.get("/")
+def root():
+    return {"message": "Bienvenue sur mon API"}
+
 while True:
         try: # To-Do: vars!
             conn = psycopg2.connect(host='localhost', database='fastapi', user='postgres', password='2YuHHakD7fy6tK88aHm2jd7cuKZMFbjsEBYoYGZtMHtX8BPBsLedxEx3mxvANaNWM8zQdqvPjE7oXZzp37KwhRv7iAd3LNwEVjJj58A27GPHeBPvwyBjWfNQwNvygg79', cursor_factory=RealDictCursor) # Makes Python Dict.
@@ -33,14 +37,9 @@ while True:
             time.sleep(2)
 
 
-
 # my_posts = [{"title": "titre post 1", "content": "contenu du post 1", "id": 1},
 #             {"title": "Mes plats favoris", "content": "J'aime la pizza", "id": 2}]
 
-
-@app.get("/")
-def root():
-    return {"message": "Bienvenue sur mon API"}
 
 
 @app.get("/posts")
@@ -56,14 +55,13 @@ def create_posts(post: Post):
     # Le code suivant n'est pas bon car vulnérable à la SQLInjection :
     # cursor.execute(f" INSERT INTO posts (title, content, published) VALUES({post.title}, {post.content}, {post.published}")
     # On utilisera la méthode suviante pour s'en prévenir:
-    cursor.execute(""" INSERT INTO posts (title, content, published) VALUES(%s, %s, %s); """, (post.title, post.content, post.published))
-    post_dict = post.dict()
-    post_dict['id'] = randrange(0, 10000000)
-    
-    # my_posts.append(post_dict)
-    # return {"data": post_dict}
+    cursor.execute(""" INSERT INTO posts (title, content, published) VALUES (%s, %s, %s) RETURNING * """, (post.title, post.content, post.published))
+    new_post = cursor.fetchone()
 
-    return {"data" : "Post créé."}
+    # Push to PSQL DB:
+    conn.commit()
+    return {"data": new_post}
+    # return {"data" : "Post créé."}
 
 def find_post(id):
     for p in my_posts:
