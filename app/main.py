@@ -26,19 +26,21 @@ def root():
     return {"message": "Bienvenue sur mon API"}
 
 while True:
-        try: # To-Do: vars!
-            conn = psycopg2.connect(host='localhost', database='fastapi', user='postgres', password='2YuHHakD7fy6tK88aHm2jd7cuKZMFbjsEBYoYGZtMHtX8BPBsLedxEx3mxvANaNWM8zQdqvPjE7oXZzp37KwhRv7iAd3LNwEVjJj58A27GPHeBPvwyBjWfNQwNvygg79', cursor_factory=RealDictCursor) # Makes Python Dict.
-            cursor = conn.cursor()
-            print("Database connection was sucessful!")
-            break
-        except Exception as error:
-            print("Connecting to the database failed")
-            print("Error: ", error)
-            time.sleep(2)
+    try: # To-Do: vars!
+        conn = psycopg2.connect(host='localhost', database='fastapi', user='postgres', 
+        password='2YuHHakD7fy6tK88aHm2jd7cuKZMFbjsEBYoYGZtMHtX8BPBsLedxEx3mxvANaNWM8zQdqvPjE7oXZzp37KwhRv7iAd3LNwEVjJj58A27GPHeBPvwyBjWfNQwNvygg79',
+        cursor_factory=RealDictCursor) # Makes Python Dict. — pylint: disable=redefined-builtin
+        cursor = conn.cursor()
+        print("Database connection was sucessful!")
+        break
+    except Exception as error:
+        print("Connecting to the database failed")
+        print("Error: ", error)
+        time.sleep(2)
 
 
-# my_posts = [{"title": "titre post 1", "content": "contenu du post 1", "id": 1},
-#             {"title": "Mes plats favoris", "content": "J'aime la pizza", "id": 2}]
+my_posts = [{"title": "titre post 1", "content": "contenu du post 1", "id": 1},
+            {"title": "Mes plats favoris", "content": "J'aime la pizza", "id": 2}]
 
 
 
@@ -46,7 +48,6 @@ while True:
 def get_posts():
     posts = cursor.execute(""" SELECT * FROM posts; """)
     posts = cursor.fetchall()
-    print(posts)
     return {"data": posts}
 
 
@@ -88,8 +89,9 @@ def get_latest_post():
 
 
 @app.get("/posts/{id}")
-def get_specific_post(id: int, response: Response):
-    post = find_post(id)
+def get_specific_post(id: str):
+    cursor.execute(""" SELECT * FROM posts WHERE id = %s """, (str(id)))
+    post = cursor.fetchone()
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"Le post {id} n'a pas été trouvé.")
