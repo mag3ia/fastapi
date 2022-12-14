@@ -85,7 +85,7 @@ def update_post(id: int, post: Post):
 @app.get("/posts/latest")
 def get_latest_post():
     post = my_posts[len(my_posts) - 1]
-    return (post)
+    return(post)
 
 
 @app.get("/posts/{id}")
@@ -108,16 +108,17 @@ def find_index_post(id):
 def delete_post(id: int):
     # trouver l'index dans le tableau qui a le bon ID
     # index = find_index_post(id)
-    cursor.execute(""" DELETE * FROM posts WHERE id = %s RETURNING * """, (str(id),))
+    cursor.execute(
+        """ DELETE FROM posts WHERE id = %s RETURNING * """, (str(id),))
+
     deleted_post =  cursor.fetchone()
     conn.commit()
 
     if deleted_post is None:
-        raise HTTPException(status_code=status.HTTP_204_NO_CONTENT,
-                            detail=f"Le post avec l'id:{id} n'existe pas")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"Le post avec l'id: {id} n'existe pas")
 
     # my_posts.pop(index)
     # Does not work with HTTP 204:
     # return {"message": f"Le post {id} à bien été supprimé"}
-        return Response(status_code=status.HTTP_204_NO_CONTENT)
-
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
