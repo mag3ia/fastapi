@@ -80,7 +80,7 @@ def update_post(id: int, post: Post):
     conn.commit()
     # index = find_index_post(id)
 
-    if update_post is None:
+    if updated_post is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
                             detail=f"Le post avec l'id:{id} n'existe pas")
 
