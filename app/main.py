@@ -6,15 +6,16 @@ from random import randrange
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import time
+from sqlalchemy.orm import Session
 from . import models
-from .database import engine, SessionLocal, session
+from .database import engine, SessionLocal
 
 
 # Automatic documentation :
 # http://127.0.0.1:8000/docs/
 # http://127.0.0.1:8000/redoc/
 
-models.Base.metadata.create-all(bind=engine)
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
@@ -26,7 +27,7 @@ def get_db():
     finally:
         db.close()
 
-class Post(BaseModel):
+class Post(BaseModel):  
     title: str
     content: str
     published: bool = True
@@ -105,9 +106,12 @@ def get_latest_post():
     post = my_posts[len(my_posts) - 1]
     return(post)
 
+
+# SQLAlchemy ORM test
 @app.get("/sqlalchemy")
 def get_posts(db: Session = Depends(get_db)):
     return {"status" : "success"}
+
 
 @app.get("/posts/{id}")
 def get_specific_post(id: str):
