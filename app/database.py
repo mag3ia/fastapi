@@ -16,3 +16,11 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Declarative Mapping: Définie la classe 'Base', tous les modèles que nous définirons pour creer nos tables dans Postgress utiliseront cette classe.
 Base = declarative_base()
+
+# Dépendance :
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
