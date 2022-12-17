@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Response, status, HTTPException
+from fastapi import FastAPI, Response, status, HTTPException, Depends
 from fastapi.params import Body
 from pydantic import BaseModel
 from typing import Optional
@@ -6,14 +6,25 @@ from random import randrange
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import time
+from . import models
+from .database import engine, SessionLocal, session
 
 
 # Automatic documentation :
 # http://127.0.0.1:8000/docs/
 # http://127.0.0.1:8000/redoc/
 
+models.Base.metadata.create-all(bind=engine)
+
 app = FastAPI()
 
+# Dépendance :
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 class Post(BaseModel):
     title: str
@@ -94,6 +105,9 @@ def get_latest_post():
     post = my_posts[len(my_posts) - 1]
     return(post)
 
+@app.get("/sqlalchemy")
+def get_posts(db: Session = Depends(get_db)):
+    return {"status" : "success"}
 
 @app.get("/posts/{id}")
 def get_specific_post(id: str):
