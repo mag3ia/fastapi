@@ -15,6 +15,7 @@ from .database import engine, get_db
 # http://127.0.0.1:8000/docs/
 # http://127.0.0.1:8000/redoc/
 
+# Creation des tables (conrespondant à models.py)
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
@@ -102,8 +103,10 @@ def get_latest_post():
 # SQLAlchemy ORM test
 @app.get("/sqlalchemy")
 def get_posts(db: Session = Depends(get_db)):
-    return {"status" : "success"}
 
+    # db.query(models.Post) Retourne une expression SQL
+    posts = db.query(models.Post).all()
+    return {"data" : posts}
 
 @app.get("/posts/{id}")
 def get_specific_post(id: str):
