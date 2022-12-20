@@ -125,18 +125,22 @@ def find_index_post(id):
 
 
 @app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_post(id: int):
+def delete_post(id: int, db: Session = Depends(get_db)):
     # trouver l'index dans le tableau qui a le bon ID
     # index = find_index_post(id)
-    cursor.execute(
-        """ DELETE FROM posts WHERE id = %s RETURNING * """, (str(id),))
+    # cursor.execute(
+    #     """ DELETE FROM posts WHERE id = %s RETURNING * """, (str(id),))
+    # deleted_post =  cursor.fetchone()
+    # conn.commit()
 
-    deleted_post =  cursor.fetchone()
-    conn.commit()
+    post_query = db.query(models.Post).filter(models.Post.id == id)
 
-    if deleted_post is None:
+    if post_query.first() is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"Le post avec l'id: {id} n'existe pas")
+
+    post_query.delete(synchronize_session = False)
+    db.commit()
 
     # my_posts.pop(index)
     # Does not work with HTTP 204:
