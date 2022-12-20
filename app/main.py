@@ -105,7 +105,7 @@ def get_latest_post():
 #     return {"data" : posts}
 
 @app.get("/posts/{id}")
-def get_post(id: int, post: Post, db: Session = Depends(get_db)):
+def get_post(id: int, db: Session = Depends(get_db)):
     # cursor.execute(""" SELECT * FROM posts WHERE id = %s """, (str(id)))
     # post = cursor.fetchone()
 
