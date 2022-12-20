@@ -57,8 +57,7 @@ def get_posts():
 
 
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
-def create_posts(
-    post: Post, db: Session = Depends(get_db)):
+def create_posts(post: Post, db: Session = Depends(get_db)):
     new_post = models.Post(**post.dict())
 
     db.add(new_post)
@@ -99,17 +98,20 @@ def get_latest_post():
 
 
 # SQLAlchemy ORM test
-@app.get("/sqlalchemy")
-def get_posts(db: Session = Depends(get_db)):
-
-    # db.query(models.Post) Retourne une expression SQL
-    posts = db.query(models.Post).all()
-    return {"data" : posts}
+# @app.get("/sqlalchemy")
+# def get_posts(db: Session = Depends(get_db)):
+#
+#     posts = db.query(models.Post).all()
+#     return {"data" : posts}
 
 @app.get("/posts/{id}")
-def get_specific_post(id: str):
-    cursor.execute(""" SELECT * FROM posts WHERE id = %s """, (str(id)))
-    post = cursor.fetchone()
+def get_post(id: int, post: Post, db: Session = Depends(get_db)):
+    # cursor.execute(""" SELECT * FROM posts WHERE id = %s """, (str(id)))
+    # post = cursor.fetchone()
+
+    post = db.query(models.Post).filter(models.Post.id == id).first()
+    print(post)
+
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"Le post {id} n'a pas été trouvé.")
