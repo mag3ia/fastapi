@@ -57,15 +57,8 @@ def get_posts():
 
 
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
-def create_posts(post: Post):
-    # Le code suivant n'est pas bon car vulnérable à la SQLInjection :
-    # cursor.execute(f" INSERT INTO posts (title, content, published) VALUES({post.title}, {post.content}, {post.published}")
-    # On utilisera la méthode suviante pour s'en prévenir:
-    cursor.execute(""" INSERT INTO posts (title, content, published) VALUES (%s, %s, %s) RETURNING * """, (post.title, post.content, post.published))
-    new_post = cursor.fetchone()
-
-    # Push to PSQL DB:
-    conn.commit()
+def create_posts(post: Post, db: Session = Depends(get_db)):
+    new_post = models.Post(title=post.title, content=post.content, published=post.published)
     return {"data": new_post}
     # return {"data" : "Post créé."}
 
