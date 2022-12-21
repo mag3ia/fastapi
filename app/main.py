@@ -81,20 +81,21 @@ def update_post(id: int, post: Post, db: Session = Depends(get_db)):
 #     conn.commit()
     # index = find_index_post(id)
 
-    post_query = db.query(models.Post).filter(models.Post.id == id).update()
+    post_query = db.query(models.Post).filter(models.Post.id == id)
     post = post_query.first()
 
-    if updated_post is None:
+    if post is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
                             detail=f"Le post avec l'id:{id} n'existe pas")
 
-    post_query.update({'title' : 'Updated Title', 'content' : 'Udpated Content'},
-        synchronize_session = False)
+    post_query.update(post.dict(),synchronize_session = False)
+
+    db.commit()
 
     # post_dict = post.dict()
     # post_dict['id'] = id
     # my_posts[index] = post_dict
-    return {'data' : 'test'}
+    return {'data' : post_query.first()}
 
 @app.get("/posts/latest")
 def get_latest_post():
