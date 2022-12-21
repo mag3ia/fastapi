@@ -72,24 +72,29 @@ def find_post(id):
             return p
 
 @app.put("/post/{id}")
-def update_post(id: int, post: Post):
+def update_post(id: int, post: Post, db: Session = Depends(get_db)):
 
-    cursor.execute(
-        """ UPDATE posts SET title = %s, content = %s, published = %s WHERE id = %s RETURNING * """,
-                        (post.title, post.content, post.published, str(id)))
-
-    updated_post = cursor.fetchone()
-    conn.commit()
+#     cursor.execute(
+#         """ UPDATE posts SET title = %s, content = %s, published = %s WHERE id = %s RETURNING * """,
+#                         (post.title, post.content, post.published, str(id)))
+#     updated_post = cursor.fetchone()
+#     conn.commit()
     # index = find_index_post(id)
+
+    post_query = db.query(models.Post).filter(models.Post.id == id).update()
+    post = post_query.first()
 
     if updated_post is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
                             detail=f"Le post avec l'id:{id} n'existe pas")
 
+    post_query.update({'title' : 'Updated Title', 'content' : 'Udpated Content'},
+        synchronize_session = False)
+
     # post_dict = post.dict()
     # post_dict['id'] = id
     # my_posts[index] = post_dict
-    return {'data' : updated_post}
+    return {'data' : 'test'}
 
 @app.get("/posts/latest")
 def get_latest_post():
