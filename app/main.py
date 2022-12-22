@@ -20,12 +20,6 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-class Post(BaseModel):  
-    title: str
-    content: str
-    published: bool = True
-#     rating: Optional[int] = None
-
 @app.get("/")
 def root():
     return {"message": "Bienvenue sur mon API"}
@@ -57,7 +51,7 @@ def get_posts():
 
 
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
-def create_posts(post: Post, db: Session = Depends(get_db)):
+def create_posts(post: schemas.Post, db: Session = Depends(get_db)):
     new_post = models.Post(**post.dict())
 
     db.add(new_post)
@@ -72,9 +66,9 @@ def find_post(id):
             return p
 
 @app.put("/post/{id}")
-def update_post(id: int, updated_post: Post, db: Session = Depends(get_db)):
+def update_post(id: int, updated_post: schemas.Post, db: Session = Depends(get_db)):
 
-#     cursor.execute(
+#     cursor.execute(<
 #         """ UPDATE posts SET title = %s, content = %s, published = %s WHERE id = %s RETURNING * """,
 #                         (post.title, post.content, post.published, str(id)))
 #     updated_post = cursor.fetchone()
