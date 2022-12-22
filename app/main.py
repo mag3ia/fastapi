@@ -47,10 +47,10 @@ my_posts = [{"title": "titre post 1", "content": "contenu du post 1", "id": 1},
 def get_posts():
     posts = cursor.execute(""" SELECT * FROM posts; """)
     posts = cursor.fetchall()
-    return {"data": posts}
+    return posts
 
 
-@app.post("/posts", status_code=status.HTTP_201_CREATED)
+@app.post("/posts", status_code=status.HTTP_201_CREATED, response_model=schemas.Post)
 def create_posts(post: schemas.PostCreate, db: Session = Depends(get_db)):
     new_post = models.Post(**post.dict())
 
@@ -58,7 +58,7 @@ def create_posts(post: schemas.PostCreate, db: Session = Depends(get_db)):
     db.commit()
     # Returning:
     db.refresh(new_post)
-    return {"data" : new_post}
+    return new_post
 
 def find_post(id):
     for p in my_posts:
@@ -89,7 +89,7 @@ def update_post(id: int, updated_post: schemas.PostCreate, db: Session = Depends
     # post_dict = post.dict()
     # post_dict['id'] = id
     # my_posts[index] = post_dict
-    return {'data' : post_query.first()}
+    return post_query.first()
 
 @app.get("/posts/latest")
 def get_latest_post():
