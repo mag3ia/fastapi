@@ -4,7 +4,9 @@ from typing import Optional, List
 from .. import models, schemas
 from ..database import get_db
 
-router = APIRouter()
+router = APIRouter(
+    prefix = "/posts"
+)
 
 @router.get("/posts", response_model=List[schemas.Post])
 def get_posts(db: Session = Depends(get_db)):
@@ -12,7 +14,7 @@ def get_posts(db: Session = Depends(get_db)):
     return posts
 
 
-@router.post("/posts", status_code=status.HTTP_201_CREATED, response_model=schemas.Post)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.Post)
 def create_posts(post: schemas.PostCreate, db: Session = Depends(get_db)):
     new_post = models.Post(**post.dict())
 
@@ -27,7 +29,7 @@ def find_post(id):
         if p['id'] == id:
             return p
 
-@router.put("/post/{id}", response_model= schemas.Post)
+@router.put("/{id}", response_model= schemas.Post)
 def update_post(id: int, updated_post: schemas.PostCreate, db: Session = Depends(get_db)):
 
     post_query = db.query(models.Post).filter(models.Post.id == id)
@@ -43,12 +45,12 @@ def update_post(id: int, updated_post: schemas.PostCreate, db: Session = Depends
 
     return post_query.first()
 
-@router.get("/posts/latest")
+@router.get("/latest")
 def get_latest_post():
     post = my_posts[len(my_posts) - 1]
     return(post)
 
-@router.get("/posts/{id}", response_model=schemas.Post)
+@router.get("/{id}", response_model=schemas.Post)
 def get_post(id: int, db: Session = Depends(get_db)):
     post = db.query(models.Post).filter(models.Post.id == id).first()
     print(post)
@@ -64,7 +66,7 @@ def find_index_post(id):
         if p['id'] == id:
             return i
 
-@router.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(id: int, db: Session = Depends(get_db)):
     post_query = db.query(models.Post).filter(models.Post.id == id)
 
