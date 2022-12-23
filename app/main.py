@@ -11,7 +11,7 @@ from . import models, schemas, utils
 from .database import engine, get_db
 from .routers import post,user
 
-# Automatic documentation :
+# Automatic documentation (Swagger UI):
 # http://127.0.0.1:8000/docs/
 # http://127.0.0.1:8000/redoc/
 
