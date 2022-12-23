@@ -7,17 +7,15 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 import time
 from sqlalchemy.orm import Session
-from . import models, schemas
+from . import models, schemas, utils
 from .database import engine, get_db
-from passlib.context import CryptContext
 
 
 # Automatic documentation :
 # http://127.0.0.1:8000/docs/
 # http://127.0.0.1:8000/redoc/
 
-# Hash passwords
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
 
 # Creation des tables (conrespondant à models.py)
 models.Base.metadata.create_all(bind=engine)
@@ -147,9 +145,9 @@ def delete_post(id: int, db: Session = Depends(get_db)):
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     
     # hash user password:
-    hashed_password = pwd_context.hash(user.password)
+    hashed_password = utils.hash(user.password)
     user.password = hashed_password
-    
+
     new_user = models.User(**user.dict())
 
     db.add(new_user)
