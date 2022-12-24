@@ -12,10 +12,10 @@ def login(user_credentials: OAuth2PasswordRequestForm = Depends(), db: Session =
     user = db.query(models.User).filter(models.User.email == user_credentials.username).first() # username = email for OAuth2PasswordRequestForm
     
     if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Identifiants invalides")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Identifiants invalides")
 
     if not utils.verify(user_credentials.password, user.password):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Identifiants invalides")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Identifiants invalides")
 
     access_token = oauth2.create_access_token(data = {"userid": user.id})
 
