@@ -23,7 +23,7 @@ def create_access_token(data: dict):
 def verify_access_token(token: str, credentials_exception):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        id: str = payload.get("user_id")
+        id: str = payload.get("userid")
         if id is None:
             raise credentials_exception
         token_data = schemas.TokenData(id=id)
@@ -34,7 +34,7 @@ def verify_access_token(token: str, credentials_exception):
 def get_current_user(token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="La vérification des identifiant à échouée.",
+        detail="La vérification des identifiants à échouée.",
         headers={"WWW-Authenticate": "Bearer"})
 
     return verify_access_token(token, credentials_exception)
