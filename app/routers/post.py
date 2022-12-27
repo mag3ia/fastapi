@@ -42,6 +42,10 @@ def update_post(id: int, updated_post: schemas.PostCreate, db: Session = Depends
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
                             detail=f"Le post avec l'id:{id} n'existe pas")
 
+    if post.owner_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail="Vous n'êtes pas autorisé à effectuer cette action")
+
     post_query.update(updated_post.dict(),synchronize_session = False)
 
     db.commit()
@@ -72,10 +76,15 @@ def find_index_post(id):
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(id: int, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
     post_query = db.query(models.Post).filter(models.Post.id == id)
+    post = post_query.first()
 
     if post_query.first() is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"Le post avec l'id: {id} n'existe pas")
+
+    if post.owner_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail="Vous n'êtes pas autorisé à effectuer cette action")
 
     post_query.delete(synchronize_session = False)
     db.commit()
