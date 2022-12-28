@@ -58,14 +58,19 @@ def get_latest_post():
     return(post)
 
 @router.get("/{id}", response_model=schemas.Post)
-def get_post(id: int, db: Session = Depends(get_db)):
+def get_post(id: int, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
     post = db.query(models.Post).filter(models.Post.id == id).first()
     print(post)
 
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"Le post {id} n'a pas été trouvé.")
-    return {"post_detail": f"Voici le post {id}", "post_details": post}
+
+    if post.owner_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail="Vous n'êtes pas autorisé à effectuer cette action")
+
+    return post
 
 
 def find_index_post(id):
