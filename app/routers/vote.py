@@ -14,7 +14,7 @@ def vote(vote: schemas.Vote, db: Session = Depends(database.get_db), current_use
 
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"Post with id: {vote.post_id} does not exist")
+                            detail=f"Le post {vote.post_id} n'existe pas")
 
     vote_query = db.query(models.Vote).filter(
         models.Vote.post_id == vote.post_id, models.Vote.user_id == current_user.id)
@@ -25,7 +25,7 @@ def vote(vote: schemas.Vote, db: Session = Depends(database.get_db), current_use
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"Vous avez déjà voté pour le post {vote.post_id}.")
         new_vote = models.Vote(post_id = vote.post_id, user_id=current_user.id)
         db.add(new_vote)
-        db.commit()
+        db.commit() 
         return {"message" : "Votre vote à bien été pris en compte"}
     else:
         if not found_vote:
