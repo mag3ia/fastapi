@@ -7,9 +7,8 @@ from .routers import post,user, auth, vote
 # http://127.0.0.1:8000/docs/
 # http://127.0.0.1:8000/redoc/
 
-
-
-models.Base.metadata.create_all(bind=engine)
+# deprecated w/ Alembic
+# models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 app.include_router(post.router)
