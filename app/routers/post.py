@@ -15,8 +15,8 @@ def get_posts(db: Session = Depends(get_db), current_user: int = Depends(oauth2.
 
     posts = db.query(models.Post).filter(models.Post.title.contains(search)).limit(limit).offset(skip).all()
 
-    results = db.query(models.Post, func.count(models.Vote.post_id).label("votes")).join(models.Vote, models.Vote.post_id == models.Post.id, isouter=True).group_by(models.Post.id).all()
-    print(results)
+#     results = db.query(models.Post, func.count(models.Vote.post_id).label("votes")).join(models.Vote, models.Vote.post_id == models.Post.id, isouter=True).group_by(models.Post.id).all()
+#     print(results)
     
     return posts
 
@@ -31,10 +31,10 @@ def create_posts(post: schemas.PostCreate, db: Session = Depends(get_db), curren
     db.refresh(new_post)
     return new_post
 
-def find_post(id):
-    for p in my_posts:
-        if p['id'] == id:
-            return p
+# def find_post(id):
+#     for p in my_posts:
+#         if p['id'] == id:
+#             return p
 
 @router.put("/{id}", response_model= schemas.Post)
 def update_post(id: int, updated_post: schemas.PostCreate, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
