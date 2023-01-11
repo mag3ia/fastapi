@@ -1,4 +1,5 @@
 from fastapi.testclient import TestClient
+import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -12,7 +13,6 @@ SQLALCHEMY_DATABASE_URL = f'postgresql://{settings.database_username}:{settings.
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
-# Base = declarative_base()
 
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
@@ -24,12 +24,18 @@ def override_get_db():
     finally:
         db.close()
 
-Base.metadata.create_all(bind=engine)
+
 app.dependency_overrides[get_db] == override_get_db
 
-client = TestClient(app)
 
-def test_create_user():
+@pytest.fixture
+def client():
+    Base.metadata.drop_all(bind=engine)
+    Base.metadata.create_all(bind=engine)
+    yield TestClient(app)
+
+
+def test_create_user(client):
     res = client.post("/users/", json={"email": "pizza@pizza.it", "password": "pepperoni"})
     new_user = schemas.UserOut(**res.json())
     assert new_user.email == ""
