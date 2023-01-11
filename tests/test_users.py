@@ -3,6 +3,7 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+from alembic import command
 from app.database import get_db
 from app.main import app
 from app import schemas
@@ -32,6 +33,8 @@ app.dependency_overrides[get_db] == override_get_db
 def client():
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
+    # command.upgrade("head")
+    # command.downgrade("base")
     yield TestClient(app)
 
 
