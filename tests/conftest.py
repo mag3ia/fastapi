@@ -91,17 +91,18 @@ def test_posts(test_user, session):
         "owner_id": test_user['id']
     }]
 
-    # Convert dict to post model.
     def create_post_model(post):
-        models.Post(**post)
+        return models.Post(**post)
 
     post_map = map(create_post_model, posts_data)
-
-    # Convert map to list.
     posts = list(post_map)
-
+    print(posts)
     session.add_all(posts)
-
+    
+    # session.add_all([models.Post(title="Les plus belles plages de la Réunion", content="Venez découvrir ces plages paradisiaques!", owner_id=test_user['id']),
+    # models.Post(title="Mes plats favoris", content="J'aime la pizza.", owner_id=test_user['id'])])
+    
     session.commit()
+
     posts = session.query(models.Post).all()
     return posts
