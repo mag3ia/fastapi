@@ -18,3 +18,8 @@ def test_login_user(test_user, client):
     assert id == test_user['id']
     assert res.status_code == 200
     assert login_res.token_type == "bearer"
+
+def test_fail_login(test_user, client):
+    res = client.post("/login", data={"username": test_user['email'], "password": "tacos"})
+    assert res.status_code == 403
+    assert res.json().get('detail') == 'Identifiants invalides'
