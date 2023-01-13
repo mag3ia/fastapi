@@ -87,7 +87,7 @@ def test_posts(test_user, test_user2, session):
         "content": "J'aime la pizza.",
         "owner_id": test_user['id']
     }]
-    
+
     def create_post_model(post):
         return models.Post(**post)
 
