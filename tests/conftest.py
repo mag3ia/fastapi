@@ -93,8 +93,9 @@ def test_posts(test_user, test_user2, session):
 
 
     post_map = map(create_post_model, post_data)
+    posts = list(post_map)
 
-    session.add_all(list(post_map))
+    session.add_all(post_map)
 
     session.commit()
 

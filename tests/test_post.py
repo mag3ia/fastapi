@@ -4,8 +4,7 @@ from app import schemas
 
 def test_get_all_posts(authorized_client, test_posts):
     res = authorized_client.get("/posts/")
-    print(res.json())
-
+#    print(res.json())
 #     assert len(res.json())==len(test_posts)
     assert res.status_code == 200
 
@@ -42,4 +41,15 @@ def test_create_post(authorized_client, test_user, test_posts, title, content, p
     assert created_post.title == title
     assert created_post.content == content
     assert created_post.published == published
+    assert created_post.owner_id == test_user['id']
+
+def test_create_post_default_published_true(authorized_client, test_user, test_posts):
+    res = authorized_client.post(
+        "/posts/", json={"title": "Can't keep checking my phone", "content": "Everyone acts crazy nowadays"})
+
+    created_post = schemas.Post(**res.json())
+    assert res.status_code == 201
+    assert created_post.title == "Can't keep checking my phone"
+    assert created_post.content == "Everyone acts crazy nowadays"
+    assert created_post.published == True
     assert created_post.owner_id == test_user['id']
